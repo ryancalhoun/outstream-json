@@ -1,14 +1,24 @@
+require 'json'
+
 module JSON
   class OutStream
     def self.generate(&body_block)
-      new body_block
+      new {
+        write_object {
+          if body_block.arity == 1
+            body_block[self]
+          else
+            @body_block = body_block
+            self.class.send(:define_method, :__call_block, &@body_block)
+            __call_block
+          end
+        }
+      }
     end
 
     def each(&out_block)
       @out_block = out_block
-      write_object {
-        @body_block[self]
-      }
+      instance_eval &@body_block
       @out_block = nil
     end
 
@@ -16,30 +26,15 @@ module JSON
       "".tap {|s| each {|str| s.concat str } }
     end
 
-    def write(obj, &block)
-      parents = obj.class.ancestors
-      if (parents & [String, Symbol]).size == 1
-        write_key obj
-        write_object(&block)
-      elsif parents.include?Hash
-        obj.each {|key,value|
-          write_key key
-          if value.respond_to?:each
-            if value.is_a?Hash
-              write_object { write value, &block }
-            else
-              write_array value, &block
-            end
-          else
-            write_value value, &block
-          end
-        }
-      end
+    def write(objs)
+      objs.each {|key,val|
+        write_key key
+        write_value val
+      }
     end
 
-
     private
-    def initialize(body_block)
+    def initialize(&body_block)
       @count = [0]
       @body_block = body_block
     end
@@ -59,17 +54,21 @@ module JSON
       @count.pop
       print "}"
     end
-    def write_array(a, &block)
+    def write_array(a)
       print "["
-      a.each_with_index do |v,i|
+      a.enum_for(:each).each_with_index {|v,i|
         print "," if i > 0
-        write_value v, &block
-      end
+        write_value v
+      }
       print "]"
     end
     def write_value(value)
-      if block_given?
-        print yield(value).to_json
+      if value.respond_to?:each_pair
+        write_object { write value }
+      elsif value.respond_to?:each
+        write_array value
+      elsif value.respond_to?:call
+        write_value value.call
       else
         print value.to_json
       end
