@@ -1,11 +1,29 @@
 require 'json'
 
 module Outstream
+  # Produce a stream of JSON tokens.
   class Json
+    # Define an output JSON object, given a block. The block
+    # is executed in a context which provides the add method,
+    # for adding key-value pairs to the object.
+    #
+    # Example:
+    #   Outstream::Json.create do
+	  #     add string: "hello", number: 42
+	  #     add array: [1,2,3]
+	  #     add "nested_object" {
+		#       add "foo" => "bar"
+	  #     }
+    #   end
     def self.create(&body_block)
       new body_block
     end
 
+    # Iterate the output tokens. The block will receive JSON delimeters individually as strings,
+    # and string values as quoted strings. If called without a block, returns an enumerator.
+    #
+    # Example:
+    #   json.each {|token| puts token}
     def each(&out_block)
       e = Enumerator.new {|yielder|
         Collector.new(yielder).collect &@body_block
@@ -14,6 +32,8 @@ module Outstream
       out_block ? e.each(&out_block) : e
     end
 
+    # Produce a compact string of the JSON. The entire string is produced at once; this is not
+    # suitable for very large JSON output.
     def to_s
       "".tap {|s| each {|str| s.concat str } }
     end
