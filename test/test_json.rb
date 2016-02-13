@@ -76,5 +76,25 @@ class TestJson < Test::Unit::TestCase
     assert_equal '{"foo":"bar","wow":"cool"}', out.to_s
   end
 
+  def testEnumerator
+    x = "fun"
+    out = Outstream::Json.generate {
+      write "foo" => "bar", "wow" => x
+    }
+    e = out.each
+    assert_equal '{', e.next
+    assert_equal '"foo"', e.next
+    assert_equal ':', e.next
+    assert_equal '"bar"', e.next
+    assert_equal ',', e.next
+    assert_equal '"wow"', e.next
+    assert_equal ':', e.next
+
+    x.upcase!
+    assert_equal '"FUN"', e.next
+    assert_equal '}', e.next
+
+  end
+
 end
 

@@ -3,23 +3,24 @@ require 'json'
 module Outstream
   class Json
     def self.generate(&body_block)
-      new {
-        write_object {
-          if body_block.arity == 1
-            body_block[self]
-          else
-            @body_block = body_block
-            self.class.send(:define_method, :__call_block, &@body_block)
-            __call_block
-          end
-        }
-      }
+      new body_block
     end
 
     def each(&out_block)
-      @out_block = out_block
-      instance_eval &@body_block
-      @out_block = nil
+      e = Enumerator.new {|yielder|
+        @yielder = yielder
+        write_object {
+          receiver = Receiver.new self
+          if @body_block.arity == 1
+            @body_block[receiver]
+          else
+            (class << receiver; self; end).send(:define_method, :__call_block, &@body_block)
+            receiver.__call_block
+          end
+        }
+      }
+
+      out_block ? e.each(&out_block) : e
     end
 
     def to_s
@@ -34,25 +35,28 @@ module Outstream
     end
 
     private
-    def initialize(&body_block)
+    def initialize(body_block)
       @count = [0]
       @body_block = body_block
     end
 
     def print(str)
-      @out_block[str]
+      @yielder << str
     end
     def write_key(key)
       print "," if @count.last > 0
-      print "#{key.to_json}:"
+      print key.to_json
+      print ":"
       @count[@count.size-1] += 1
     end
     def write_object
       print "{"
       @count.push 0
-      yield
+      result = yield
       @count.pop
       print "}"
+
+      result
     end
     def write_array(a)
       print "["
@@ -73,5 +77,15 @@ module Outstream
         print value.to_json
       end
     end
+
+    class Receiver
+      def initialize(json)
+        @_json = json
+      end
+      def write(objs)
+        @_json.write objs
+      end
+    end
+
   end
 end
