@@ -28,8 +28,8 @@ module Outstream
       def initialize(collector)
         @_collector = collector
       end
-      def write(objs)
-        @_collector.write objs
+      def add(objs)
+        @_collector.add objs
       end
     end
 
@@ -39,7 +39,7 @@ module Outstream
         @count = [0]
       end
       def collect(&block)
-        write_object {
+        add_object {
           receiver = Receiver.new self
           if block.arity == 1
             block[receiver]
@@ -49,47 +49,47 @@ module Outstream
           end
         }
       end
-      def print(str)
+      def write(str)
         @yielder << str
       end
-      def write(objs)
+      def add(objs)
         objs.each {|key,val|
-          write_key key
-          write_value val
+          add_key key
+          add_value val
         }
       end
-      def write_key(key)
-        print "," if @count.last > 0
-        print key.to_json
-        print ":"
+      def add_key(key)
+        write "," if @count.last > 0
+        write key.to_json
+        write ":"
         @count[@count.size-1] += 1
       end
-      def write_object
-        print "{"
+      def add_object
+        write "{"
         @count.push 0
         result = yield
         @count.pop
-        print "}"
+        write "}"
 
         result
       end
-      def write_array(a)
-        print "["
+      def add_array(a)
+        write "["
         a.enum_for(:each).each_with_index {|v,i|
-          print "," if i > 0
-          write_value v
+          write "," if i > 0
+          add_value v
         }
-        print "]"
+        write "]"
       end
-      def write_value(value)
+      def add_value(value)
         if value.respond_to?:each_pair
-          write_object { write value }
+          add_object { add value }
         elsif value.respond_to?:each
-          write_array value
+          add_array value
         elsif value.respond_to?:call
-          write_value value.call
+          add_value value.call
         else
-          print value.to_json
+          write value.to_json
         end
       end
     end
