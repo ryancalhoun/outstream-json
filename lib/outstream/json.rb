@@ -1,7 +1,7 @@
 require 'json'
 
-module JSON
-  class OutStream
+module Outstream
+  class Json
     def self.generate(&body_block)
       new {
         write_object {

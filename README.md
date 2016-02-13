@@ -1,6 +1,6 @@
-[![Gem Version](https://badge.fury.io/rb/json-outstream.svg)](http://badge.fury.io/rb/json-outstream)
+[![Gem Version](https://badge.fury.io/rb/outstream-json.svg)](http://badge.fury.io/rb/outstream-json)
 
-# JSON::OutStream
+# OutStream::Json
 
 
 
@@ -8,7 +8,7 @@
 
 Add this line to your application's Gemfile:
 
-    gem 'json-outstream'
+    gem 'outstream-json'
 
 And then execute:
 
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install json-outstream
+    $ gem install outstream-json
 
 ## Usage
 
