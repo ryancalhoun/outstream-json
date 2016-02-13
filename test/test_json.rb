@@ -96,5 +96,13 @@ class TestJson < Test::Unit::TestCase
 
   end
 
+  def testObjectBlock
+    out = Outstream::Json.create {
+      add "foo" do
+        add "bar" => "wow"
+      end
+    }
+    assert_equal '{"foo":{"bar":"wow"}}', out.to_s
+  end
 end
 

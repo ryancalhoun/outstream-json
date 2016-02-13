@@ -28,8 +28,8 @@ module Outstream
       def initialize(collector)
         @_collector = collector
       end
-      def add(objs)
-        @_collector.add objs
+      def add(objs, &block)
+        @_collector.add objs, &block
       end
     end
 
@@ -52,8 +52,16 @@ module Outstream
       def write(str)
         @yielder << str
       end
-      def add(objs)
-        objs.each {|key,val|
+      def add(objs, &block)
+        if block
+          add_key objs
+          add_object &block
+        else
+          add_to_object objs
+        end
+      end
+      def add_to_object(objs)
+        objs.each_pair {|key,val|
           add_key key
           add_value val
         }
@@ -83,7 +91,7 @@ module Outstream
       end
       def add_value(value)
         if value.respond_to?:each_pair
-          add_object { add value }
+          add_object { add_to_object value }
         elsif value.respond_to?:each
           add_array value
         elsif value.respond_to?:call
