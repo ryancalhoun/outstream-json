@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/outstream-json.svg)](http://badge.fury.io/rb/outstream-json)
 
-# OutStream::Json
+# Outstream::Json
 
 
 
