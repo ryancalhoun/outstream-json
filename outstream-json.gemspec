@@ -8,5 +8,5 @@ Gem::Specification.new {|s|
 	s.authors = ['Ryan Calhoun']
 	s.email = ['ryanjamescalhoun@gmail.com']
 	s.files = ['lib/outstream-json.rb', 'lib/outstream/json.rb', 'LICENSE.txt', 'README.md']
-	s.test_files = ['test/test_outstream.rb', 'Rakefile']
+	s.test_files = ['test/test_json.rb', 'Rakefile']
 }
