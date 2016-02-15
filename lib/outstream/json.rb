@@ -23,13 +23,19 @@ module Outstream
     # and string values as quoted strings. If called without a block, returns an enumerator.
     #
     # Example:
-    #   json.each {|token| puts token}
+    #   json.each {|token| puts token} => nil
+    #   json.each => an_enumerator
     def each(&out_block)
       e = Enumerator.new {|yielder|
         Collector.new(yielder).collect &@body_block
       }
 
-      out_block ? e.each(&out_block) : e
+      if out_block
+        e.each(&out_block)
+        nil
+      else
+        e
+      end
     end
 
     # Produce a compact string of the JSON. The entire string is produced at once; this is not

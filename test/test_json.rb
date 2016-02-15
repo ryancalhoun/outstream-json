@@ -76,6 +76,15 @@ class TestJson < Test::Unit::TestCase
     assert_equal '{"foo":"bar","wow":"cool"}', out.to_s
   end
 
+  def testEachBlock
+    out = Outstream::Json.create {
+      add "foo" => "bar"
+    }
+    tokens = []
+    assert_equal nil, out.each {|str| tokens << str}
+    assert_equal %w({ "foo" : "bar" }), tokens
+  end
+
   def testEnumerator
     x = "fun"
     out = Outstream::Json.create {
