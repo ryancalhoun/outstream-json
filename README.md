@@ -25,7 +25,7 @@ The Json.create method defines a JSON object
 	out = Outstream::Json.create do
 	  ...
 	end
-	# use out.to_s or out.each to product result
+	# use out.to_s or out.each to produce result
 
 Use with basic ruby types
 
