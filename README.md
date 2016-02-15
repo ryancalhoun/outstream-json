@@ -22,7 +22,7 @@ Or install it yourself as:
 
 The Json.create method defines a JSON object
 
-	out = OutStream::Json.create do
+	out = Outstream::Json.create do
 	  ...
 	end
 	# use out.to_s or out.each to product result

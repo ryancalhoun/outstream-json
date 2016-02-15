@@ -9,11 +9,11 @@ module Outstream
     #
     # Example:
     #   Outstream::Json.create do
-	  #     add string: "hello", number: 42
-	  #     add array: [1,2,3]
-	  #     add "nested_object" {
-		#       add "foo" => "bar"
-	  #     }
+    #     add string: "hello", number: 42
+    #     add array: [1,2,3]
+    #     add "nested_object" {
+    #       add "foo" => "bar"
+    #     }
     #   end
     def self.create(&body_block)
       new body_block
