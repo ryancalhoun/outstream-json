@@ -35,12 +35,17 @@ Use with basic ruby types
 	end
 	# {"string":"hello","number":42,"array":[1,2,3]}
 
+Use with hashes or blocks to create nested objects
+
 	Outstream::Json.create do
-	  add "nested_object" {
+	  add "block_object" do
 	    add "foo" => "bar"
+	  end
+	  add "hash_object" => {
+	    "wow" => "cool"
 	  }
 	end
-	# {"nested_object":{"foo":"bar"}}
+	# {"block_object":{"foo":"bar"},"hash_object":{"wow":"cool"}}
 
 Use with transformed SQL result set
 

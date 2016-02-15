@@ -31,7 +31,7 @@ class TestJson < Test::Unit::TestCase
   end
   def testHash
     out = Outstream::Json.create {
-      add "foo" => {a: 1, b: 2}
+      add "foo" => { a: 1, b: 2 }
     }
     assert_equal '{"foo":{"a":1,"b":2}}', out.to_s
   end
