@@ -1,6 +1,6 @@
 Gem::Specification.new {|s|
 	s.name = 'outstream-json'
-	s.version = '0.1.1'
+	s.version = '0.1.2'
 	s.licenses = ['MIT']
 	s.summary = 'A streaming library for writing large json output'
 	s.description = 'A library which provides a means for writing a large number of object as json without building the entire set in memory first.'
