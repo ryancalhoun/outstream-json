@@ -37,7 +37,7 @@ Use with basic ruby types
 
 	Outstream::Json.create do
 	  add "nested_object" {
-		add "foo" => "bar"
+	    add "foo" => "bar"
 	  }
 	end
 	# {"nested_object":{"foo":"bar"}}
@@ -45,7 +45,7 @@ Use with basic ruby types
 Use with transformed SQL result set
 
 	client = Mysql2::Client.new
-  	results = client.query("SELECT * FROM huge\_table", stream: true)	
+	results = client.query("SELECT * FROM hugetable", stream: true)
 	Outstream::Json.create do
 	  add results: results.lazy.map {|row| transform_row(row)}
 	end
