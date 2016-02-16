@@ -99,21 +99,29 @@ module Outstream
         @count[@count.size-1] += 1
       end
       def add_object
-        write "{"
-        @count.push 0
-        result = yield
-        @count.pop
-        write "}"
-
-        result
+        begin
+          write "{"
+          @count.push 0
+          return yield
+        rescue
+          raise
+        ensure
+          @count.pop
+          write "}"
+        end
       end
       def add_array(a)
-        write "["
-        a.enum_for(:each).each_with_index {|v,i|
-          write "," if i > 0
-          add_value v
-        }
-        write "]"
+        begin
+          write "["
+          a.enum_for(:each).each_with_index {|v,i|
+            write "," if i > 0
+            add_value v
+          }
+        rescue
+          raise
+        ensure
+          write "]"
+        end
       end
       def add_value(value)
         if value.respond_to?:each_pair
@@ -121,7 +129,12 @@ module Outstream
         elsif value.respond_to?:each
           add_array value
         elsif value.respond_to?:call
-          add_value value.call
+          begin
+            add_value value.call
+          rescue
+            add_value nil
+            raise
+          end
         else
           write value.to_json
         end

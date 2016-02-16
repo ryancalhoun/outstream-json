@@ -113,5 +113,24 @@ class TestJson < Test::Unit::TestCase
     }
     assert_equal '{"foo":{"bar":"wow"}}', out.to_s
   end
+
+  def testException
+    out = Outstream::Json.create {
+      add "foo" do
+        add "bar" => lambda { raise }
+      end
+    }
+    tokens = []
+    assert_raise { out.each {|str| tokens << str} }
+    assert_equal %w({ "foo" : { "bar" : null } }), tokens
+  end
+  def testExceptionInArray
+    out = Outstream::Json.create {
+      add "foo" => [lambda { raise }]
+    }
+    tokens = []
+    assert_raise { out.each {|str| tokens << str} }
+    assert_equal %w({ "foo" : [ null ] }), tokens
+  end
 end
 
